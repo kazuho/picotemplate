@@ -1,0 +1,34 @@
+PICOTEMPLATE - a tiny template engine for embedded HTML
+=======================================================
+
+Picotemplate is a tiny template engine (preprocessor) designed to embed HTML (or other types of document) within the source code of any programming language.
+
+There are often cases where you would like to generate HTML within a program.  In such cases, the easiest way would be to use a DSL (domain-specific language) to embed the HTML in the source code and preprocess it.  Picotemplate is a preprocesser designed for such an use-case.
+
+As of now, Perl, C++, JavaScript, and JSX are the supported languages.
+
+THE LOGIC
+---------
+
+* lines starting with "?" are considered as embedded document
+* <?= ?> within embedded document are considered as expressions (that return strings)
+* the output is accumulated to variable named "_" (or $output in case of perl)
+* filenames starting with an underscore (_) will be preprocessed, and the name of the output file will be the same omitting the leading underscore (e.g. _foo.cc will be preproccessed and converted to foo.cc)
+
+EXAMPLE
+-------
+
+The following code (in _foo.cc) will be preprocessed and converted to a function (in foo.cc) that returns an function building an HTML snippet.
+
+    std::string unordered_list(const std::vector<std::string>& strs)
+    {
+        std::string _; // output is accumulated to _
+    ?<ul>
+        for (std::vector<std::string>::const_iterator i = strs.begin();
+             i != strs.end();
+             ++i) {
+    ?<li><?= escapeHTML(*i) ?></li>
+        }
+    ?</ul>
+        return _;
+    }
