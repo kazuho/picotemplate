@@ -66,7 +66,6 @@ sub convfunc {
             # push_str function
             sub {
                 my $str = shift;
-                my $str = shift;
                 $str =~ s/([\\'"])/\\$1/gs;
                 $str =~ s/\n/\\n/gs;
                 return qq{_.append("$str");};
