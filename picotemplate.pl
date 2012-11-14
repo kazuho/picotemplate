@@ -61,7 +61,7 @@ sub convfunc {
             # push_expr function
             sub {
                 my $src = shift;
-                return qq^{std::string _r($src); if (! _r.empty() && _r.back() == '\n') _r.erase(_r.size() - 1); _.append(_r);}^;
+                return qq^{std::string _r($src); if (! _r.empty() && _r.back() == '\\n') _r.erase(_r.size() - 1); _.append(_r);}^;
             },
             # push_str function
             sub {
