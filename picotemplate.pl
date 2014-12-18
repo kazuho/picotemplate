@@ -22,12 +22,45 @@
 
 use strict;
 use warnings;
+use Getopt::Long;
+
+my ($opt_conf, $opt_help);
+GetOptions(
+    "conf=s" => \$opt_conf,
+    help     => \$opt_help,
+) or exit 1;
+
+if ($opt_help) {
+    print << "EOT";
+Usage:
+    $0 [--conf=<script-file>] <src-file>
+
+Description:
+    Applies necessary conversions against <src-file> (the name should start
+    with an underscore) and emits the result.  The result is stored in a file
+    which is given the same name as <src-file> omitting the preceeding
+    underscore.
+
+Options:
+    --conf=<script-file>  if set, reads configuration from <script-file>,
+                          otherwise the configuration is taken from the
+                          extension of <src-file>
+
+EOT
+    exit 0;
+}
 
 my $srcfn = shift @ARGV;
 die "no filename"
     unless $srcfn;
 
-my ($push_expr, $push_void_expr, $push_str) = convfunc($srcfn);
+our ($push_expr, $push_void_expr, $push_str);
+
+if ($opt_conf) {
+    require $opt_conf;
+} else {
+    ($push_expr, $push_void_expr, $push_str) = convfunc($srcfn);
+}
 
 $srcfn =~ m{^(.*/)_([^/]+)$}
     or die "filename should start with an underscore";
