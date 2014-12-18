@@ -20,19 +20,23 @@ EXAMPLE
 
 The following code (in _foo.cc) will be preprocessed and converted to a function (in foo.cc) that returns an function building an HTML snippet.
 
-    std::string unordered_list(const std::vector<std::string>& strs)
-    {
-        std::string _; // output is accumulated to _
-    ?<ul>
-        for (std::vector<std::string>::const_iterator i = strs.begin();
-             i != strs.end();
-             ++i) {
-    ?<li><?= escapeHTML(*i) ?></li>
-        }
-    ?</ul>
-        return _;
+```
+std::string unordered_list(const std::vector<std::string>& strs)
+{
+    std::string _; // output is accumulated to _
+?<ul>
+    for (std::vector<std::string>::const_iterator i = strs.begin();
+         i != strs.end();
+         ++i) {
+?<li><?= escapeHTML(*i) ?></li>
     }
+?</ul>
+    return _;
+}
+```
 
-To preprocess a source file, simply run the command with the name of the source file to preprocess.  The following exmaple preprocesses __foo.cc_ (template files should start with an underscore) and produces _foo.cc_.
+To preprocess a source file, simply run the command with the name of the source file to preprocess.  The following exmaple preprocesses _foo.cc_ (template files should start with an underscore) and produces _foo.cc_.
 
-    $ picotemplate.pl _foo.cc
+```
+$ picotemplate.pl _foo.cc
+```
