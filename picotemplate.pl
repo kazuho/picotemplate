@@ -71,26 +71,33 @@ open my $srcfh, "<", $srcfn
 open my $dstfh, ">", $dstfn
     or die "failed to open file:$dstfn";
 
+my $pending = '';
+my $flush_pending = sub {
+    return if $pending eq '';
+    print $dstfh $push_str->($pending), map { "\n" } @{[ $pending =~ /\n/g ]};
+    $pending = '';
+};
 while (my $line = <$srcfh>) {
     if ($line =~ /^\?/) {
         my $markup = $';
-        my @st;
         for my $token (split /(<\?[=!].*?\?>)/, $markup) {
             if ($token =~ /^\<\?([=!])\s*(.*?)\s*\?>$/) {
+                $flush_pending->();
                 if ($1 eq '=') {
-                    push @st, $push_expr->($2);
+                    print $dstfh $push_expr->($2);
                 } else {
-                    push @st, $push_void_expr->($2);
+                    print $dstfh $push_void_expr->($2);
                 }
             } elsif ($token ne "") {
-                push @st, $push_str->($token);
+                $pending .= $token;
             }
         }
-        print $dstfh join(" ", @st), "\n";
     } else {
+        $flush_pending->();
         print $dstfh "$line";
     }
 }
+$flush_pending->();
 
 close $srcfh;
 close $dstfh;
